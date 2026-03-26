@@ -23,10 +23,13 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconDotsVertical, IconGripVertical, IconPlus, IconTrash } from '@tabler/icons-react';
 import {
   ActionIcon,
+  Avatar,
   Badge,
   Box,
   Button,
   Card,
+  ColorSwatch,
+  Divider,
   Drawer,
   Group,
   Menu,
@@ -42,52 +45,83 @@ interface Card {
   id: string;
   title: string;
   description?: string;
+  createdAt?: string;
+  createdBy?: string;
 }
 
 interface List {
   id: string;
   title: string;
+  color: string;
   cards: Card[];
 }
+
+const LIST_COLORS = [
+  '#868e96', // gray
+  '#fa5252', // red
+  '#fd7e14', // orange
+  '#fcc419', // yellow
+  '#51cf66', // green
+  '#20c997', // teal
+  '#339af0', // blue
+  '#748ffc', // indigo
+  '#845ef7', // violet
+  '#f783ac', // pink
+];
 
 const initialData: List[] = [
   {
     id: 'list-1',
     title: 'To Do',
+    color: '#fa5252',
     cards: [
       {
         id: 'card-1',
         title: 'Design landing page',
         description: 'Create a beautiful landing page design',
+        createdAt: '2024-01-15',
+        createdBy: 'John Doe',
       },
       {
         id: 'card-2',
         title: 'Set up project structure',
         description: 'Initialize the project with proper structure',
+        createdAt: '2024-01-14',
+        createdBy: 'Jane Smith',
       },
     ],
   },
   {
     id: 'list-2',
     title: 'In Progress',
+    color: '#339af0',
     cards: [
       {
         id: 'card-3',
         title: 'Implement authentication',
         description: 'Add login and signup functionality',
+        createdAt: '2024-01-13',
+        createdBy: 'John Doe',
       },
     ],
   },
   {
     id: 'list-3',
     title: 'Done',
+    color: '#51cf66',
     cards: [
-      { id: 'card-4', title: 'Project setup', description: 'Initialize the Next.js project' },
+      {
+        id: 'card-4',
+        title: 'Project setup',
+        description: 'Initialize the Next.js project',
+        createdAt: '2024-01-10',
+        createdBy: 'Jane Smith',
+      },
     ],
   },
 ];
 
-function SortableCard({ card }: { card: Card }) {
+function SortableCard({ card, onClick }: { card: Card; onClick: (card: Card) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card.id,
   });
@@ -106,6 +140,7 @@ function SortableCard({ card }: { card: Card }) {
       padding="sm"
       radius="md"
       withBorder
+      onClick={() => onClick(card)}
       {...attributes}
       {...listeners}
     >
@@ -129,9 +164,11 @@ function SortableCard({ card }: { card: Card }) {
 function SortableList({
   list,
   onAddCardClick,
+  onCardClick,
 }: {
   list: List;
   onAddCardClick: (listId: string) => void;
+  onCardClick: (card: Card) => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: list.id,
@@ -155,6 +192,8 @@ function SortableList({
     >
       <Group justify="space-between" className={classes.listHeader} {...listeners}>
         <Group gap="xs">
+          <ColorSwatch color={list.color} size={12} />
+          <div className={classes.boardColor} style={{ backgroundColor: `${list.color}` }} />
           <Text fw={600} size="sm">
             {list.title}
           </Text>
@@ -178,7 +217,7 @@ function SortableList({
       <SortableContext items={list.cards.map((c) => c.id)} strategy={verticalListSortingStrategy}>
         <Box className={classes.cardsContainer}>
           {list.cards.map((card) => (
-            <SortableCard key={card.id} card={card} />
+            <SortableCard key={card.id} card={card} onClick={onCardClick} />
           ))}
         </Box>
       </SortableContext>
@@ -202,11 +241,14 @@ export default function KanbanBoardPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeType, setActiveType] = useState<'card' | 'list' | null>(null);
   const [newListTitle, setNewListTitle] = useState('');
+  const [newListColor, setNewListColor] = useState(LIST_COLORS[0]);
   const [isAddingList, setIsAddingList] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [newCardTitle, setNewCardTitle] = useState('');
   const [newCardDescription, setNewCardDescription] = useState('');
+  const [cardDrawerOpen, setCardDrawerOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 
@@ -313,10 +355,12 @@ export default function KanbanBoardPage() {
     const newList: List = {
       id: `list-${Date.now()}`,
       title: newListTitle,
+      color: newListColor,
       cards: [],
     };
     setLists([...lists, newList]);
     setNewListTitle('');
+    setNewListColor(LIST_COLORS[0]);
     setIsAddingList(false);
   };
 
@@ -327,14 +371,22 @@ export default function KanbanBoardPage() {
     setDrawerOpen(true);
   };
 
+  const handleCardClick = (card: Card) => {
+    setSelectedCard(card);
+    setCardDrawerOpen(true);
+  };
+
   const handleAddCard = () => {
     if (!newCardTitle.trim() || !selectedListId) {
       return;
     }
+    const today = new Date().toISOString().split('T')[0];
     const newCard: Card = {
       id: `card-${Date.now()}`,
       title: newCardTitle.trim(),
       description: newCardDescription.trim() || undefined,
+      createdAt: today,
+      createdBy: 'Current User',
     };
     setLists((prev) =>
       prev.map((list) =>
@@ -383,7 +435,12 @@ export default function KanbanBoardPage() {
               strategy={horizontalListSortingStrategy}
             >
               {lists.map((list) => (
-                <SortableList key={list.id} list={list} onAddCardClick={handleOpenDrawer} />
+                <SortableList
+                  key={list.id}
+                  list={list}
+                  onAddCardClick={handleOpenDrawer}
+                  onCardClick={handleCardClick}
+                />
               ))}
             </SortableContext>
 
@@ -405,6 +462,29 @@ export default function KanbanBoardPage() {
                       }
                     }}
                   />
+                  <Box mt="xs">
+                    <Text size="xs" c="dimmed" mb={4}>
+                      Status color
+                    </Text>
+                    <Group gap={4}>
+                      {LIST_COLORS.map((color) => (
+                        <ColorSwatch
+                          key={color}
+                          color={color}
+                          size={20}
+                          style={{
+                            cursor: 'pointer',
+                            border:
+                              newListColor === color
+                                ? '2px solid var(--mantine-color-dark-5)'
+                                : '2px solid transparent',
+                            borderRadius: '4px',
+                          }}
+                          onClick={() => setNewListColor(color)}
+                        />
+                      ))}
+                    </Group>
+                  </Box>
                   <Group gap="xs" mt="xs">
                     <Button size="xs" onClick={handleAddList}>
                       Add
@@ -481,6 +561,56 @@ export default function KanbanBoardPage() {
               </Button>
             </Group>
           </Box>
+        </Drawer>
+
+        <Drawer
+          opened={cardDrawerOpen}
+          onClose={() => setCardDrawerOpen(false)}
+          title="Card Details"
+          position="right"
+          size="md"
+          withCloseButton={false}
+        >
+          {selectedCard && (
+            <Box style={{ padding: '16px' }}>
+              <Title order={4} mb="md">
+                {selectedCard.title}
+              </Title>
+              {selectedCard.description && (
+                <>
+                  <Text size="sm" fw={500} c="dimmed" mb="xs">
+                    Description
+                  </Text>
+                  <Text size="sm" mb="lg">
+                    {selectedCard.description}
+                  </Text>
+                </>
+              )}
+              <Divider my="md" />
+              <Text size="sm" fw={500} c="dimmed" mb="xs">
+                Details
+              </Text>
+              <Group gap="md">
+                <Box>
+                  <Text size="xs" c="dimmed">
+                    Created at
+                  </Text>
+                  <Text size="sm">{selectedCard.createdAt || 'N/A'}</Text>
+                </Box>
+                <Box>
+                  <Text size="xs" c="dimmed">
+                    Created by
+                  </Text>
+                  <Group gap="xs">
+                    <Avatar size="sm" radius="xl">
+                      {selectedCard.createdBy?.charAt(0) || '?'}
+                    </Avatar>
+                    <Text size="sm">{selectedCard.createdBy || 'Unknown'}</Text>
+                  </Group>
+                </Box>
+              </Group>
+            </Box>
+          )}
         </Drawer>
       </Box>
     </BasicAppShell>

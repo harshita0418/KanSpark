@@ -18,6 +18,12 @@
   min-height: 400px;
 }
 
+.boardColor {
+  width: 40px;
+  height: 6px;
+  border-radius: 3px;
+}
+
 .title {
   font-size: rem(28px);
   font-weight: 700;
