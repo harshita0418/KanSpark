@@ -1,0 +1,138 @@
+.wrapper {
+  min-height: calc(100dvh - 60px);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.boardHeader {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+.board {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 16px;
+  align-items: flex-start;
+  min-height: 400px;
+}
+
+.title {
+  font-size: rem(28px);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.list {
+  min-width: 280px;
+  max-width: 280px;
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 8px;
+  padding: 12px;
+  flex-shrink: 0;
+  cursor: grab;
+}
+
+.list:active {
+  cursor: grabbing;
+}
+
+.listHeader {
+  padding: 8px 4px;
+  margin-bottom: 8px;
+  cursor: grab;
+}
+
+.cardsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 20px;
+}
+
+.card {
+  width: 100%;
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 8px;
+  padding: 12px;
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.card:active {
+  cursor: grabbing;
+}
+
+.card:hover {
+  box-shadow: var(--mantine-shadow-md);
+  border-color: var(--mantine-color-violet-4);
+}
+
+.dragHandle {
+  color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-gray-5));
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.card:hover .dragHandle {
+  opacity: 1;
+}
+
+.addCardBtn {
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.addCardBtn:hover {
+  background: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.addListContainer {
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+}
+
+.addListBtn {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  border: 2px dashed light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 80px;
+  transition: all 0.2s ease;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.addListBtn:hover {
+  border-color: var(--mantine-color-violet-5);
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+}
+
+.addListForm {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.dragOverlayCard {
+  background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  border: 1px solid var(--mantine-color-violet-4);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--mantine-shadow-xl);
+  opacity: 0.9;
+}
+
+.dragOverlayList {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+  border: 1px solid var(--mantine-color-violet-4);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--mantine-shadow-xl);
+  opacity: 0.9;
+}

@@ -1,0 +1,11 @@
+.userButton {
+  display: block;
+  width: 100%;
+  padding: rem(10px) rem(12px);
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.15s ease;
+ 
+  &:hover {
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  }
+}

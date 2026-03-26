@@ -1,0 +1,53 @@
+.wrapper {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.title {
+  font-size: rem(40px);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+
+  @media (max-width: $mantine-breakpoint-md) {
+    font-size: rem(32px);
+  }
+}
+
+.description {
+  font-size: rem(18px);
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+.card {
+  position: relative;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border: 2px solid light-dark(var(--mantine-color-violet-2), var(--mantine-color-violet-8));
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--mantine-shadow-xl);
+  }
+}
+
+.popularBadge {
+  position: absolute;
+  top: rem(-12px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: rem(1px);
+}
+
+.price {
+  font-size: rem(48px);
+  font-weight: 800;
+  line-height: 1;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.checkIcon {
+  color: var(--mantine-color-violet-6);
+}
