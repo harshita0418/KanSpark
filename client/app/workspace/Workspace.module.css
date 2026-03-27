@@ -1,0 +1,90 @@
+.wrapper {
+  min-height: calc(100dvh - 60px);
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.title {
+  font-size: rem(28px);
+  font-weight: 700;
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.sectionTitle {
+  font-size: rem(16px);
+  font-weight: 600;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+  margin-bottom: rem(16px);
+}
+
+.emptyState {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: rem(40px) rem(20px);
+}
+
+.emptyImage {
+  max-width: 100%;
+  width: 280px;
+  height: auto;
+  opacity: 0.8;
+}
+
+.boardCard {
+  background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+  border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--mantine-shadow-md);
+    border-color: var(--mantine-color-violet-4);
+  }
+}
+
+.boardColor {
+  width: 40px;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.newBoardCard {
+  background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  border: 2px dashed light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-4));
+  cursor: pointer;
+  min-height: rem(140px);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--mantine-color-violet-5);
+    background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+  }
+}
+
+.newBoardContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+}
+
+@media (max-width: $mantine-breakpoint-sm) {
+  .title {
+    font-size: rem(22px);
+  }
+
+  .emptyImage {
+    width: 200px;
+  }
+
+  .emptyContent {
+    padding: rem(24px) rem(16px);
+  }
+}
