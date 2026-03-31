@@ -49,19 +49,27 @@ const deleteCard = async ({ cardId }) => {
   return { message: "Card deleted successfully" };
 };
 
-const moveCard = async ({ cardId, listId, position }) => {
-  const card = await Card.findById(cardId);
-
-  if (!card) {
-    throw new Error("Card not found");
+const moveCard = async ({ cards, listId }) => {
+  if (!cards || !Array.isArray(cards) || cards.length === 0) {
+    throw new Error("cards array is required");
   }
 
-  if (listId !== undefined) card.listId = listId;
-  if (position !== undefined) card.position = position;
+  // Build bulk update operations for all cards at once
+  const bulkOps = cards.map(({ cardId, position }) => ({
+    updateOne: {
+      filter: { _id: cardId },
+      update: {
+        $set: {
+          position,
+          ...(listId !== undefined && { listId }),
+        },
+      },
+    },
+  }));
 
-  await card.save();
+  await Card.bulkWrite(bulkOps);
 
-  return card;
+  return { message: "Cards reordered successfully" };
 };
 
 module.exports = { createCard, updateCard, deleteCard, moveCard };
