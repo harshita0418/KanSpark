@@ -55,22 +55,20 @@ const remove = async (req, res) => {
 
 const move = async (req, res) => {
   try {
-    const { cardId } = req.params;
-    const { listId, position } = req.body;
+    const { cards, listId } = req.body;
 
-    if (listId === undefined && position === undefined) {
+    if (!cards || !Array.isArray(cards) || cards.length === 0) {
       return res.status(400).json({
         success: false,
-        message: "At least listId or position is required",
+        message: "cards array is required",
       });
     }
 
-    const data = await moveCard({ cardId, listId, position });
+    const data = await moveCard({ cards, listId });
 
     return res.status(200).json({
       success: true,
-      message: "Card moved successfully",
-      data,
+      message: data.message,
     });
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
