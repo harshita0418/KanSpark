@@ -1,18 +1,15 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { IconMoon, IconSun } from '@tabler/icons-react';
 import {
-  ActionIcon,
   AppShell,
   Burger,
   Group,
   Text,
-  useComputedColorScheme,
-  useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { NavbarSearch } from '../NavbarSearch/NavbarSearch';
+import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
 import classes from './BasicAppShell.module.css';
 
 interface AppShellProps {
@@ -21,15 +18,17 @@ interface AppShellProps {
 
 export function BasicAppShell({ children }: AppShellProps) {
   const [opened, { toggle }] = useDisclosure();
-  const { setColorScheme } = useMantineColorScheme();
-  const computedColorScheme = useComputedColorScheme('light');
-
-  const toggleColorScheme = () => {
-    setColorScheme(computedColorScheme === 'dark' ? 'light' : 'dark');
-  };
 
   return (
-    <AppShell header={{ height: 60 }} navbar={{ width: 300, breakpoint: 'sm' }} padding="md">
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{ 
+        width: 300, 
+        breakpoint: 'sm',
+        collapsed: { mobile: !opened }
+      }}
+      padding="md"
+    >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
@@ -38,18 +37,7 @@ export function BasicAppShell({ children }: AppShellProps) {
               Kanspark
             </Text>
           </Group>
-          <ActionIcon
-            onClick={toggleColorScheme}
-            variant="subtle"
-            size="lg"
-            aria-label="Toggle color scheme"
-          >
-            {computedColorScheme === 'dark' ? (
-              <IconSun size={20} stroke={1.5} />
-            ) : (
-              <IconMoon size={20} stroke={1.5} />
-            )}
-          </ActionIcon>
+          <ColorSchemeToggle />
         </Group>
       </AppShell.Header>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { AuthGuard } from '@/components/Auth';
 import {
   closestCorners,
   DndContext,
@@ -413,8 +414,9 @@ export default function KanbanBoardPage() {
   const activeItem = getActiveItem();
 
   return (
-    <BasicAppShell>
-      <Box className={classes.wrapper}>
+    <AuthGuard>
+      <BasicAppShell>
+        <Box className={classes.wrapper}>
         <Group justify="space-between" className={classes.boardHeader}>
           <Title order={3}>Product Roadmap</Title>
           <Button size="xs" variant="light">
@@ -614,5 +616,6 @@ export default function KanbanBoardPage() {
         </Drawer>
       </Box>
     </BasicAppShell>
+    </AuthGuard>
   );
 }

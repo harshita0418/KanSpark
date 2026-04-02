@@ -2,7 +2,7 @@ import '@mantine/core/styles.css';
 
 import React from 'react';
 import { Inter } from 'next/font/google';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
+import { mantineHtmlProps, MantineProvider } from '@mantine/core';
 import { Providers } from '@/components/Providers/Providers';
 import { theme } from '../theme';
 
@@ -17,7 +17,6 @@ export default function RootLayout({ children }: { children: any }) {
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
         <link rel="shortcut icon" href="/favicon.svg" />
         <meta
           name="viewport"
@@ -25,7 +24,7 @@ export default function RootLayout({ children }: { children: any }) {
         />
       </head>
       <body className={inter.className}>
-        <MantineProvider theme={theme}>
+        <MantineProvider theme={theme} defaultColorScheme="light">
           <Providers>{children}</Providers>
         </MantineProvider>
       </body>

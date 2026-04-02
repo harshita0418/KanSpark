@@ -1,19 +1,19 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 const { getMembers, addBoardMember, updateRole, deleteMember } = require("./member.controller");
 const { protect } = require("../auth/auth.middleware");
 const { isBoardMember, isBoardOwner } = require("./member.middleware");
 
-// GET /api/boards/:boardId/members
-router.get("/", protect, isBoardMember, getMembers);
+// GET /api/members/:boardId/members
+router.get("/:boardId/members", protect, isBoardMember, getMembers);
 
-// POST /api/boards/:boardId/members
-router.post("/", protect, isBoardOwner, addBoardMember);
+// POST /api/members/:boardId/members
+router.post("/:boardId/members", protect, isBoardOwner, addBoardMember);
 
-// PATCH /api/boards/:boardId/members/:userId
-router.patch("/:userId", protect, isBoardOwner, updateRole);
+// PATCH /api/members/:boardId/members/:userId
+router.patch("/:boardId/members/:userId", protect, isBoardOwner, updateRole);
 
-// DELETE /api/boards/:boardId/members/:userId
-router.delete("/:userId", protect, isBoardOwner, deleteMember);
+// DELETE /api/members/:boardId/members/:userId
+router.delete("/:boardId/members/:userId", protect, isBoardOwner, deleteMember);
 
 module.exports = router;

@@ -1,14 +1,24 @@
-const BoardMember = require("../member/member.model");
+const Board = require("../board/board.model");
 const Card = require("./card.model");
 
 // Only editors and owners can create, update, delete, move cards
 const canEditCard = async (req, res, next) => {
   try {
     const boardId = req.params.boardId || req.body.boardId;
-    const userId = req.user.userId;
+    const userId = req.user.id;
 
-    const member = await BoardMember.findOne({ boardId, userId });
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ success: false, message: "Board not found" });
+    }
 
+    // Owner can edit
+    if (board.createdBy.toString() === userId) {
+      return next();
+    }
+
+    // Check if user is a member
+    const member = board.members.find(m => m.userId.toString() === userId);
     if (!member) {
       return res.status(403).json({
         success: false,

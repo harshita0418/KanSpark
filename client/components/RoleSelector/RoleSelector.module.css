@@ -1,0 +1,28 @@
+.root {
+  padding: var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-default);
+  border: 1px solid var(--mantine-color-gray-4);
+  background-color: transparent;
+  transition: background-color 150ms ease;
+
+  &[data-checked] {
+    background-color: var(--mantine-color-violet-light);
+    border-color: var(--mantine-color-violet-5);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition-property: background-color, border-color;
+    transition-duration: 150ms;
+  }
+}
+
+.label {
+  font-weight: 500;
+  font-size: var(--mantine-font-size-sm);
+}
+
+.description {
+  color: var(--mantine-color-gray-6);
+  font-size: var(--mantine-font-size-xs);
+  line-height: 1.4;
+}

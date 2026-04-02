@@ -4,7 +4,7 @@ const getMembers = async (req, res) => {
   try {
     const { boardId } = req.params;
 
-    const data = await getBoardMembers({ boardId });
+    const data = await getBoardMembers(boardId);
 
     return res.status(200).json({
       success: true,
@@ -21,11 +21,13 @@ const addBoardMember = async (req, res) => {
     const { boardId } = req.params;
     const { userId, role } = req.body;
 
+    console.log('addBoardMember controller - boardId:', boardId, 'userId:', userId, 'role:', role);
+
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required" });
     }
 
-    const data = await addMember({ boardId, userId, role });
+    const data = await addMember(boardId, userId, role);
 
     return res.status(201).json({
       success: true,
@@ -46,7 +48,7 @@ const updateRole = async (req, res) => {
       return res.status(400).json({ success: false, message: "role is required" });
     }
 
-    const data = await updateMemberRole({ boardId, userId, role });
+    const data = await updateMemberRole(boardId, userId, role);
 
     return res.status(200).json({
       success: true,
@@ -62,7 +64,7 @@ const deleteMember = async (req, res) => {
   try {
     const { boardId, userId } = req.params;
 
-    const data = await removeMember({ boardId, userId });
+    const data = await removeMember(boardId, userId);
 
     return res.status(200).json({
       success: true,
