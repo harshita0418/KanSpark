@@ -1,4 +1,5 @@
 const boardService = require("./board.service");
+const { emitBoardsChanged, emitBoardDeleted } = require("../../realtime/socket");
 
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -8,6 +9,7 @@ const createBoard = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
   const userId = req.user.id;
   const board = await boardService.createBoard(title, description, userId);
+  await emitBoardsChanged(req.app.get("io"), board._id);
   res.status(201).json(board);
 });
 
@@ -37,7 +39,8 @@ const deleteBoard = asyncHandler(async (req, res) => {
   if (!board) {
     return res.status(403).json({ success: false, message: "Forbidden" });
   }
-  
+
+  emitBoardDeleted(req.app.get("io"), board);
   res.status(200).json({ message: "Board deleted" });
 });
 
@@ -50,7 +53,8 @@ const updateBoard = asyncHandler(async (req, res) => {
   if (!board) {
     return res.status(403).json({ success: false, message: "Forbidden" });
   }
-  
+
+  await emitBoardsChanged(req.app.get("io"), board._id);
   res.status(200).json(board);
 });
 
