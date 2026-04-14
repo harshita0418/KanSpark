@@ -30,3 +30,24 @@ export interface CreateBoardInput {
   title: string;
   description?: string;
 }
+
+export interface List {
+  _id: string;
+  title: string;
+  boardId: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Card {
+  _id: string;
+  title: string;
+  description?: string;
+  listId: string;
+  boardId: string;
+  assigneeId?: string;
+  position: number;
+  createdAt: string;
+  updatedAt: string;
+}

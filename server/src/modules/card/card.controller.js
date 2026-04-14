@@ -1,21 +1,32 @@
-const { createCard, updateCard, deleteCard, moveCard } = require("./card.service");
+const { createCard, updateCard, deleteCard, moveCard, getCardsByList } = require("./card.service");
 
-const create = async (req, res) => {
+const getByList = async (req, res) => {
   try {
-    const { boardId } = req.params;
-    const { title, description, listId, assigneeId } = req.body;
-
+    const { listId } = req.query;
+    
     if (!listId) {
       return res.status(400).json({ success: false, message: "listId is required" });
     }
 
-    const data = await createCard({ title, description, listId, boardId, assigneeId });
+    const cards = await getCardsByList(listId);
 
-    return res.status(201).json({
-      success: true,
-      message: "Card created successfully",
-      data,
-    });
+    return res.status(200).json(cards);
+  } catch (error) {
+    return res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+const create = async (req, res) => {
+  try {
+    const { title, description, listId } = req.body;
+
+    if (!title || !listId) {
+      return res.status(400).json({ success: false, message: "title and listId are required" });
+    }
+
+    const data = await createCard({ title, description, listId });
+
+    return res.status(201).json(data);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -28,11 +39,7 @@ const update = async (req, res) => {
 
     const data = await updateCard({ cardId, title, description, assigneeId });
 
-    return res.status(200).json({
-      success: true,
-      message: "Card updated successfully",
-      data,
-    });
+    return res.status(200).json(data);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -44,10 +51,7 @@ const remove = async (req, res) => {
 
     const data = await deleteCard({ cardId });
 
-    return res.status(200).json({
-      success: true,
-      message: data.message,
-    });
+    return res.status(200).json(data);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -55,24 +59,22 @@ const remove = async (req, res) => {
 
 const move = async (req, res) => {
   try {
-    const { cards, listId } = req.body;
+    const { cardId } = req.params;
+    const { newListId, position } = req.body;
 
-    if (!cards || !Array.isArray(cards) || cards.length === 0) {
+    if (!newListId || position === undefined) {
       return res.status(400).json({
         success: false,
-        message: "cards array is required",
+        message: "newListId and position are required",
       });
     }
 
-    const data = await moveCard({ cards, listId });
+    const data = await moveCard({ cardId, newListId, position });
 
-    return res.status(200).json({
-      success: true,
-      message: data.message,
-    });
+    return res.status(200).json(data);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
 };
 
-module.exports = { create, update, remove, move };
+module.exports = { getByList, create, update, remove, move };

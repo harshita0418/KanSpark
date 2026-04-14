@@ -1,19 +1,15 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
-const { create, update, remove, move } = require("./card.controller");
+const router = express.Router();
+const { create, update, remove, move, getByList } = require("./card.controller");
 const { protect } = require("../auth/auth.middleware");
 const { canEditCard, cardBelongsToBoard } = require("./card.middleware");
 
-// POST /api/boards/:boardId/cards
-router.post("/", protect, canEditCard, create);
+router.use(protect);
 
-// PATCH /api/boards/:boardId/cards/:cardId
-router.patch("/:cardId", protect, canEditCard, cardBelongsToBoard, update);
-
-// DELETE /api/boards/:boardId/cards/:cardId
-router.delete("/:cardId", protect, canEditCard, cardBelongsToBoard, remove);
-
-// PATCH /api/boards/:boardId/cards/:cardId/move
-router.patch("/:cardId/move", protect, canEditCard, cardBelongsToBoard, move);
+router.get("/", getByList);
+router.post("/", create);
+router.patch("/:cardId", cardBelongsToBoard, update);
+router.delete("/:cardId", cardBelongsToBoard, remove);
+router.patch("/:cardId/move", canEditCard, cardBelongsToBoard, move);
 
 module.exports = router;

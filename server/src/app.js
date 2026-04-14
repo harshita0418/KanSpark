@@ -18,10 +18,14 @@ const userRoutes = require('./modules/user/user.routes');
 const authRoutes = require('./modules/auth/auth.routes');
 const boardRoutes = require('./modules/board/board.routes');
 const memberRoutes = require('./modules/member/member.routes');
+const listRoutes = require('./modules/list/list.routes');
+const cardRoutes = require('./modules/card/card.routes');
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/boards', boardRoutes);
 app.use('/api/members', memberRoutes);
+app.use('/api/lists', listRoutes);
+app.use('/api/cards', cardRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

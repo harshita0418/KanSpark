@@ -1,20 +1,30 @@
+const mongoose = require("mongoose");
 const Card = require("./card.model");
+const List = require("../list/list.model");
 
-const createCard = async ({ title, description, listId, boardId, assigneeId }) => {
-  if (!title || !listId || !boardId) {
-    throw new Error("title, listId and boardId are required");
+const getCardsByList = async (listId) => {
+  const cards = await Card.find({ listId }).sort({ position: 1 });
+  return cards;
+};
+
+const createCard = async ({ title, description, listId, boardId }) => {
+  if (!title || !listId) {
+    throw new Error("title and listId are required");
   }
 
-  // Set position as last in the list
+  const list = await List.findById(listId);
+  if (!list) {
+    throw new Error("List not found");
+  }
+
   const lastCard = await Card.findOne({ listId }).sort({ position: -1 });
   const position = lastCard ? lastCard.position + 1 : 0;
 
   const card = await Card.create({
     title,
-    description,
+    description: description || "",
     listId,
-    boardId,
-    assigneeId: assigneeId || null,
+    boardId: list.boardId,
     position,
   });
 
@@ -49,27 +59,23 @@ const deleteCard = async ({ cardId }) => {
   return { message: "Card deleted successfully" };
 };
 
-const moveCard = async ({ cards, listId }) => {
-  if (!cards || !Array.isArray(cards) || cards.length === 0) {
-    throw new Error("cards array is required");
+const moveCard = async ({ cardId, newListId, position }) => {
+  const card = await Card.findById(cardId);
+  if (!card) {
+    throw new Error("Card not found");
   }
 
-  // Build bulk update operations for all cards at once
-  const bulkOps = cards.map(({ cardId, position }) => ({
-    updateOne: {
-      filter: { _id: cardId },
-      update: {
-        $set: {
-          position,
-          ...(listId !== undefined && { listId }),
-        },
-      },
-    },
-  }));
+  const list = await List.findById(newListId);
+  if (!list) {
+    throw new Error("List not found");
+  }
 
-  await Card.bulkWrite(bulkOps);
+  card.listId = newListId;
+  card.boardId = list.boardId;
+  card.position = position;
+  await card.save();
 
-  return { message: "Cards reordered successfully" };
+  return card;
 };
 
-module.exports = { createCard, updateCard, deleteCard, moveCard };
+module.exports = { getCardsByList, createCard, updateCard, deleteCard, moveCard };
