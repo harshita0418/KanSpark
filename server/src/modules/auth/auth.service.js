@@ -55,52 +55,5 @@ const loginUser = async ({ email, password }) => {
   };
 };
 
-const forgotPassword = async (email) => {
-  const user = await User.findOne({ email });
-  if (!user) {
-    return;
-  }
 
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-  user.resetPasswordExpires = Date.now() + 60 * 60 * 1000;
-
-  await user.save();
-
-  await sendResetEmail(email, resetToken);
-};
-
-const resetPassword = async (token, password) => {
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
-
-  const user = await User.findOne({
-    resetPasswordToken: hashedToken,
-    resetPasswordExpires: { $gt: Date.now() },
-  });
-
-  if (!user) {
-    throw new Error("Invalid or expired reset token");
-  }
-
-  user.password = password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpires = undefined;
-
-  await user.save();
-
-  const jwtToken = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
-  });
-
-  return {
-    token: jwtToken,
-    user: {
-      id: user._id,
-      name: user.name,
-      lastname: user.lastname,
-      email: user.email,
-    },
-  };
-};
-
-module.exports = { registerUser, loginUser, forgotPassword, resetPassword };
+module.exports = { registerUser, loginUser };

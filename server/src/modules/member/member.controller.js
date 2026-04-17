@@ -1,4 +1,5 @@
 const { getBoardMembers, addMember, updateMemberRole, removeMember } = require("./member.service");
+const { emitBoardsChanged } = require("../../realtime/socket");
 
 const getMembers = async (req, res) => {
   try {
@@ -28,6 +29,7 @@ const addBoardMember = async (req, res) => {
     }
 
     const data = await addMember(boardId, userId, role);
+    await emitBoardsChanged(req.app.get("io"), boardId, [userId]);
 
     return res.status(201).json({
       success: true,
@@ -49,6 +51,7 @@ const updateRole = async (req, res) => {
     }
 
     const data = await updateMemberRole(boardId, userId, role);
+    await emitBoardsChanged(req.app.get("io"), boardId, [userId]);
 
     return res.status(200).json({
       success: true,
@@ -65,6 +68,7 @@ const deleteMember = async (req, res) => {
     const { boardId, userId } = req.params;
 
     const data = await removeMember(boardId, userId);
+    await emitBoardsChanged(req.app.get("io"), boardId, [userId]);
 
     return res.status(200).json({
       success: true,

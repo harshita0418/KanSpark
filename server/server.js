@@ -1,22 +1,19 @@
 require('dotenv').config();
-const { createServer } = require('http');
-const { Server } = require('socket.io');
+const http = require("http");
 const app = require('./src/app');
 const connectToDB = require('./src/config/db');
-const { setupSocketHandlers } = require('./src/socket/socketHandler');
+const { setupSocketServer } = require("./src/realtime/socket");
 const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
 
 console.log('PORT:', process.env.PORT);
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
 
-connectToDB();
+connectToDB()
+setupSocketServer(server, app);
 
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST']
-  }
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 app.set('io', io);
