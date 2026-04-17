@@ -2,6 +2,7 @@
 
 import { IconArrowRight } from '@tabler/icons-react';
 import { Box, Button, Container, Group, Text, Title, useComputedColorScheme } from '@mantine/core';
+import Link from 'next/link';
 import classes from './Hero.module.css';
 
 export function Hero() {
@@ -24,6 +25,8 @@ export function Hero() {
           </Text>
           <Group justify="center" mt="xl">
             <Button
+              component={Link}
+              href="/signup"
               size="lg"
               variant="gradient"
               gradient={{ from: 'violet', to: 'indigo', deg: 135 }}
@@ -31,7 +34,7 @@ export function Hero() {
             >
               Get Started Free
             </Button>
-            <Button size="lg" variant="outline" color="violet">
+            <Button component={Link} href="/demo" size="lg" variant="outline" color="violet">
               View Demo
             </Button>
           </Group>

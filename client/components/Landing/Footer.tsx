@@ -2,42 +2,43 @@
 
 import { IconBrandGithub, IconBrandLinkedin, IconBrandTwitter } from '@tabler/icons-react';
 import { Anchor, Box, Container, Group, SimpleGrid, Text } from '@mantine/core';
+import Link from 'next/link';
 import classes from './Footer.module.css';
 
 const links = [
   {
     title: 'Product',
     links: [
-      { label: 'Features', href: '#' },
-      { label: 'Pricing', href: '#' },
-      { label: 'Integrations', href: '#' },
-      { label: 'Changelog', href: '#' },
+      { label: 'Features', href: '/#features' },
+      { label: 'Pricing', href: '/pricing' },
+      { label: 'Integrations', href: '/integrations' },
+      { label: 'Changelog', href: '/changelog' },
     ],
   },
   {
     title: 'Company',
     links: [
-      { label: 'About', href: '#' },
-      { label: 'Blog', href: '#' },
-      { label: 'Careers', href: '#' },
-      { label: 'Contact', href: '#' },
+      { label: 'About', href: '/about' },
+      { label: 'Blog', href: '/blog' },
+      { label: 'Careers', href: '/careers' },
+      { label: 'Contact', href: '/contact' },
     ],
   },
   {
     title: 'Resources',
     links: [
-      { label: 'Documentation', href: '#' },
-      { label: 'API Reference', href: '#' },
-      { label: 'Community', href: '#' },
-      { label: 'Support', href: '#' },
+      { label: 'Documentation', href: '/docs' },
+      { label: 'API Reference', href: '/api-reference' },
+      { label: 'Community', href: '/community' },
+      { label: 'Support', href: '/support' },
     ],
   },
   {
     title: 'Legal',
     links: [
-      { label: 'Privacy Policy', href: '#' },
-      { label: 'Terms of Service', href: '#' },
-      { label: 'Cookie Policy', href: '#' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Service', href: '/terms' },
+      { label: 'Cookie Policy', href: '/cookies' },
     ],
   },
 ];
@@ -49,7 +50,7 @@ export function Footer() {
         {group.title}
       </Text>
       {group.links.map((link) => (
-        <Anchor key={link.label} href={link.href} c="dimmed" size="sm" className={classes.link}>
+        <Anchor key={link.label} component={Link} href={link.href} c="dimmed" size="sm" className={classes.link}>
           {link.label}
         </Anchor>
       ))}
@@ -69,13 +70,13 @@ export function Footer() {
               ship faster.
             </Text>
             <Group mt="md" gap="sm">
-              <Anchor href="#" c="dimmed" className={classes.socialLink}>
+              <Anchor component={Link} href="https://twitter.com" target="_blank" c="dimmed" className={classes.socialLink}>
                 <IconBrandTwitter size={20} />
               </Anchor>
-              <Anchor href="#" c="dimmed" className={classes.socialLink}>
+              <Anchor component={Link} href="https://github.com" target="_blank" c="dimmed" className={classes.socialLink}>
                 <IconBrandGithub size={20} />
               </Anchor>
-              <Anchor href="#" c="dimmed" className={classes.socialLink}>
+              <Anchor component={Link} href="https://linkedin.com" target="_blank" c="dimmed" className={classes.socialLink}>
                 <IconBrandLinkedin size={20} />
               </Anchor>
             </Group>

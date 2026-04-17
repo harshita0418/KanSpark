@@ -2,6 +2,7 @@
 
 import { IconArrowRight } from '@tabler/icons-react';
 import { Box, Button, Container, Group, Text, Title } from '@mantine/core';
+import Link from 'next/link';
 import classes from './CTA.module.css';
 
 export function CTA() {
@@ -16,6 +17,8 @@ export function CTA() {
         </Text>
         <Group justify="center" mt="xl">
           <Button
+            component={Link}
+            href="/signup"
             size="xl"
             variant="gradient"
             gradient={{ from: 'violet', to: 'indigo', deg: 135 }}

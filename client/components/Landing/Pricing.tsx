@@ -13,6 +13,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import Link from 'next/link';
 import classes from './Pricing.module.css';
 
 const plans = [

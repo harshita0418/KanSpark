@@ -12,6 +12,7 @@ import {
   useComputedColorScheme,
   useMantineColorScheme,
 } from '@mantine/core';
+import Link from 'next/link';
 import classes from './Navbar.module.css';
 
 export function Navbar() {
@@ -31,16 +32,16 @@ export function Navbar() {
           </Text>
 
           <Group gap="md" visibleFrom="sm">
-            <Anchor href="/workspace" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/workspace" c="dimmed" className={classes.navLink}>
               Workspace
             </Anchor>
-            <Anchor href="#" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/pricing" c="dimmed" className={classes.navLink}>
               Pricing
             </Anchor>
-            <Anchor href="#" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/about" c="dimmed" className={classes.navLink}>
               About
             </Anchor>
-            <Anchor href="#" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/blog" c="dimmed" className={classes.navLink}>
               Blog
             </Anchor>
           </Group>
@@ -59,10 +60,12 @@ export function Navbar() {
                 <IconMoon size={20} stroke={1.5} />
               )}
             </ActionIcon>
-            <Button variant="subtle" color="violet" visibleFrom="sm">
+            <Button component={Link} href="/login" variant="subtle" color="violet" visibleFrom="sm">
               Log in
             </Button>
             <Button
+              component={Link}
+              href="/signup"
               variant="gradient"
               gradient={{ from: 'violet', to: 'indigo', deg: 135 }}
               hiddenFrom="sm"
