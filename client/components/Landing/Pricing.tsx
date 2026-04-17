@@ -95,15 +95,31 @@ export function Pricing() {
       <Text size="sm" c="dimmed" mt="xs">
         {plan.description}
       </Text>
-      <Button
-        fullWidth
-        mt="xl"
-        variant={plan.popular ? 'gradient' : 'outline'}
-        gradient={plan.popular ? { from: 'violet', to: 'indigo', deg: 135 } : undefined}
-        color={plan.popular ? undefined : 'violet'}
-      >
-        {plan.cta}
-      </Button>
+      {plan.name === 'Enterprise' ? (
+        <Button
+          component={Link}
+          href="/contact"
+          fullWidth
+          mt="xl"
+          variant={plan.popular ? 'gradient' : 'outline'}
+          gradient={plan.popular ? { from: 'violet', to: 'indigo', deg: 135 } : undefined}
+          color={plan.popular ? undefined : 'violet'}
+        >
+          {plan.cta}
+        </Button>
+      ) : (
+        <Button
+          component={Link}
+          href="/signup"
+          fullWidth
+          mt="xl"
+          variant={plan.popular ? 'gradient' : 'outline'}
+          gradient={plan.popular ? { from: 'violet', to: 'indigo', deg: 135 } : undefined}
+          color={plan.popular ? undefined : 'violet'}
+        >
+          {plan.cta}
+        </Button>
+      )}
       <List
         mt="xl"
         spacing="sm"

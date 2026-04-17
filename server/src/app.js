@@ -7,7 +7,7 @@ connectToDB();
 const app = express();
 
 app.use(cors({
-  origin: '*',
+  origin: 'https://84ee-2409-40d2-5a-34bf-29a8-8ef9-df7-4aea.ngrok-free.app',
   credentials: true,
 }));
 app.use(express.json());
