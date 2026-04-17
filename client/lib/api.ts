@@ -37,7 +37,7 @@ export const apiFetch = async <T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> => {
-  const baseUrl = typeof window !== 'undefined' ? API_BASE_URL : API_BASE_URL;
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || API_BASE_URL;
   const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
     headers: {
