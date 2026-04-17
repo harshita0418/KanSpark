@@ -90,4 +90,7 @@ module.exports = {
   getBoard,
   deleteBoard,
   updateBoard,
+  getArchivedBoards,
+  restoreBoard,
+  permanentDeleteBoard,
 };

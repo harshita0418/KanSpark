@@ -43,6 +43,7 @@ import {
   Group,
   Menu,
   Modal,
+  SegmentedControl,
   Text,
   Textarea,
   TextInput,
@@ -103,7 +104,7 @@ function SortableList({
   onAddCardClick,
   onCardClick,
   onDeleteList,
-  canEdit,
+  canEdit = true,
 }: {
   list: ListWithCards;
   onAddCardClick: (listId: string) => void;
@@ -129,8 +130,7 @@ function SortableList({
           <Text fw={600} size="sm">{list.title}</Text>
           <Badge size="sm" variant="light">{list.cards.length}</Badge>
         </Group>
-        {canEdit && (
-          <Menu shadow="md" width={200}>
+        <Menu shadow="md" width={200}>
             <Menu.Target>
               <ActionIcon variant="subtle" size="sm" onClick={(e) => e.stopPropagation()}>
                 <IconDotsVertical size={16} />
@@ -142,7 +142,6 @@ function SortableList({
               </Menu.Item>
             </Menu.Dropdown>
           </Menu>
-        )}
       </Group>
       <SortableContext items={list.cards.map((c) => c._id)} strategy={verticalListSortingStrategy}>
         <Box className={classes.cardsContainer}>
@@ -151,11 +150,9 @@ function SortableList({
           ))}
         </Box>
       </SortableContext>
-      {canEdit && (
-        <Button variant="subtle" size="xs" fullWidth mt="xs" leftSection={<IconPlus size={14} />} className={classes.addCardBtn} onClick={() => onAddCardClick(list._id)}>
+      <Button variant="subtle" size="xs" fullWidth mt="xs" leftSection={<IconPlus size={14} />} className={classes.addCardBtn} onClick={() => onAddCardClick(list._id)}>
           Add card
         </Button>
-      )}
     </Card>
   );
 }
@@ -206,6 +203,7 @@ export default function KanbanBoardPage() {
   const [editCardTitle, setEditCardTitle] = useState('');
   const [editCardDescription, setEditCardDescription] = useState('');
   const [deleteCardConfirmOpen, setDeleteCardConfirmOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
 
   const userRole = useMemo(() => {
     if (!membersData || !user) return 'viewer';
@@ -215,8 +213,7 @@ export default function KanbanBoardPage() {
     return member?.role || 'viewer';
   }, [membersData, user]);
 
-  const canEdit = userRole === 'owner' || userRole === 'editor';
-  const isReadOnly = userRole === 'viewer';
+  const canEdit = true;
 
   useEffect(() => {
     if (data?.lists && data?.cards) {
@@ -470,59 +467,115 @@ export default function KanbanBoardPage() {
         <Box className={classes.wrapper}>
           <Group justify="space-between" className={classes.boardHeader}>
             <Title order={3}>{boardData?.title || 'Board'}</Title>
-            <Button size="xs" variant="light">Settings</Button>
+            <SegmentedControl
+              size="xs"
+              value={viewMode}
+              onChange={(value) => setViewMode(value as 'kanban' | 'list')}
+              data={[
+                { label: 'Kanban', value: 'kanban' },
+                { label: 'List', value: 'list' },
+              ]}
+            />
           </Group>
 
-          <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
-            <Box className={classes.board}>
-              <SortableContext items={lists.map((l) => l._id)} strategy={horizontalListSortingStrategy}>
-                {lists.map((list) => (
-                  <SortableList key={list._id} list={list} onAddCardClick={handleOpenDrawer} onCardClick={handleCardClick} onDeleteList={handleDeleteList} canEdit={canEdit} />
-                ))}
-              </SortableContext>
+          {viewMode === 'kanban' ? (
+            <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragOver={handleDragOver} onDragEnd={handleDragEnd}>
+              <Box className={classes.board}>
+                <SortableContext items={lists.map((l) => l._id)} strategy={horizontalListSortingStrategy}>
+                  {lists.map((list) => (
+                    <SortableList key={list._id} list={list} onAddCardClick={handleOpenDrawer} onCardClick={handleCardClick} onDeleteList={handleDeleteList} canEdit={canEdit} />
+                  ))}
+                </SortableContext>
 
-              <Box className={classes.addListContainer}>
-                {isAddingList ? (
-                  <Box className={classes.addListForm}>
-                    <TextInput placeholder="Enter list title" size="xs" value={newListTitle} onChange={(e) => setNewListTitle(e.target.value)} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') handleAddList(); if (e.key === 'Escape') setIsAddingList(false); }} />
-                    <Box mt="xs">
-                      <Text size="xs" c="dimmed" mb={4}>Color</Text>
-                      <Group gap={4}>
-                        {LIST_COLORS.map((color) => (
-                          <ColorSwatch
-                            key={color}
-                            color={color}
-                            size={20}
-                            onClick={() => setNewListColor(color)}
-                            style={{ cursor: 'pointer', border: newListColor === color ? '2px solid var(--mantine-color-dark-5)' : '2px solid transparent', borderRadius: '4px' }}
-                          />
-                        ))}
+                <Box className={classes.addListContainer}>
+                  {isAddingList ? (
+                    <Box className={classes.addListForm}>
+                      <TextInput placeholder="Enter list title" size="xs" value={newListTitle} onChange={(e) => setNewListTitle(e.target.value)} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') handleAddList(); if (e.key === 'Escape') setIsAddingList(false); }} />
+                      <Box mt="xs">
+                        <Text size="xs" c="dimmed" mb={4}>Color</Text>
+                        <Group gap={4}>
+                          {LIST_COLORS.map((color) => (
+                            <ColorSwatch
+                              key={color}
+                              color={color}
+                              size={20}
+                              onClick={() => setNewListColor(color)}
+                              style={{ cursor: 'pointer', border: newListColor === color ? '2px solid var(--mantine-color-dark-5)' : '2px solid transparent', borderRadius: '4px' }}
+                            />
+                          ))}
+                        </Group>
+                      </Box>
+                      <Group gap="xs" mt="xs">
+                        <Button size="xs" onClick={handleAddList}>Add</Button>
+                        <Button size="xs" variant="subtle" onClick={() => setIsAddingList(false)}>Cancel</Button>
                       </Group>
                     </Box>
-                    <Group gap="xs" mt="xs">
-                      <Button size="xs" onClick={handleAddList}>Add</Button>
-                      <Button size="xs" variant="subtle" onClick={() => setIsAddingList(false)}>Cancel</Button>
+                  ) : canEdit && (
+                    <Button variant="subtle" fullWidth leftSection={<IconPlus size={16} />} onClick={() => setIsAddingList(true)} className={classes.addListBtn}>Add another list</Button>
+                  )}
+                </Box>
+              </Box>
+
+              <DragOverlay>
+                {activeId && activeType === 'card' && activeItem && (
+                  <Box className={classes.dragOverlayCard}>
+                    <Text size="sm" fw={500}>{(activeItem as CardType).title}</Text>
+                  </Box>
+                )}
+                {activeId && activeType === 'list' && activeItem && (
+                  <Box className={classes.dragOverlayList}>
+                    <Text fw={600} size="sm">{(activeItem as ListWithCards).title}</Text>
+                  </Box>
+                )}
+              </DragOverlay>
+            </DndContext>
+          ) : (
+            <Box>
+              {lists.map((list) => (
+                <Box key={list._id} mb="lg">
+                  <Card shadow="sm" padding="sm" radius="md">
+                    <Card.Section withBorder inheritPadding py="sm">
+                      <Group justify="space-between">
+                        <Text fw={600}>{list.title}</Text>
+                        <Badge>{list.cards.length}</Badge>
+                      </Group>
+                    </Card.Section>
+                    {list.cards.map((card) => (
+                      <Box key={card._id} p="xs" style={{ cursor: 'pointer' }} onClick={() => handleCardClick(card)}>
+                        <Text size="sm">{card.title}</Text>
+                        {card.description && <Text size="xs" c="dimmed" lineClamp={2}>{card.description}</Text>}
+                      </Box>
+                    ))}
+                  </Card>
+                </Box>
+              ))}
+              {canEdit && isAddingList ? (
+                <Card shadow="sm" padding="sm" radius="md" mt="md">
+                  <TextInput placeholder="Enter list title" size="xs" value={newListTitle} onChange={(e) => setNewListTitle(e.target.value)} autoFocus onKeyDown={(e) => { if (e.key === 'Enter') handleAddList(); if (e.key === 'Escape') setIsAddingList(false); }} mb="xs" />
+                  <Box mb="xs">
+                    <Text size="xs" c="dimmed" mb={4}>Color</Text>
+                    <Group gap={4}>
+                      {LIST_COLORS.map((color) => (
+                        <ColorSwatch
+                          key={color}
+                          color={color}
+                          size={20}
+                          onClick={() => setNewListColor(color)}
+                          style={{ cursor: 'pointer', border: newListColor === color ? '2px solid var(--mantine-color-dark-5)' : '2px solid transparent', borderRadius: '4px' }}
+                        />
+                      ))}
                     </Group>
                   </Box>
-                ) : canEdit && (
-                  <Button variant="subtle" fullWidth leftSection={<IconPlus size={16} />} onClick={() => setIsAddingList(true)} className={classes.addListBtn}>Add another list</Button>
-                )}
-              </Box>
+                  <Group gap="xs">
+                    <Button size="xs" onClick={handleAddList}>Add</Button>
+                    <Button size="xs" variant="subtle" onClick={() => setIsAddingList(false)}>Cancel</Button>
+                  </Group>
+                </Card>
+              ) : canEdit && (
+                <Button variant="subtle" leftSection={<IconPlus size={16} />} onClick={() => setIsAddingList(true)}>Add another list</Button>
+              )}
             </Box>
-
-            <DragOverlay>
-              {activeId && activeType === 'card' && activeItem && (
-                <Box className={classes.dragOverlayCard}>
-                  <Text size="sm" fw={500}>{(activeItem as CardType).title}</Text>
-                </Box>
-              )}
-              {activeId && activeType === 'list' && activeItem && (
-                <Box className={classes.dragOverlayList}>
-                  <Text fw={600} size="sm">{(activeItem as ListWithCards).title}</Text>
-                </Box>
-              )}
-            </DragOverlay>
-          </DndContext>
+          )}
 
           <Drawer opened={drawerOpen} onClose={() => setDrawerOpen(false)} title="Add New Card" position="right" size="md" withCloseButton={false}>
             <Box style={{ padding: '16px' }}>
