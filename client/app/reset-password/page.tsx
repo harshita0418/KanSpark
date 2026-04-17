@@ -17,11 +17,6 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useResetPassword } from '@/hooks/mutation/useAuth';
 import classes from '@/components/Auth/AuthForm.module.css';
 
-export const metadata = {
-  title: 'Reset Password - Kanspark',
-  description: 'Reset your Kanspark password',
-};
-
 function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const router = useRouter();

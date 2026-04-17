@@ -17,11 +17,6 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { useForgotPassword } from '@/hooks/mutation/useAuth';
 import classes from '@/components/Auth/AuthForm.module.css';
 
-export const metadata = {
-  title: 'Forgot Password - Kanspark',
-  description: 'Reset your Kanspark password',
-};
-
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
