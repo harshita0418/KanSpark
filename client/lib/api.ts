@@ -1,4 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+    ? 'http://localhost:5000/api' 
+    : 'http://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io/api');
 
 export const getToken = (): string | null => {
   if (typeof window !== 'undefined') {

@@ -7,7 +7,7 @@ connectToDB();
 const app = express();
 
 app.use(cors({
-  origin: ['https://kanspark-ruddy.vercel.app', 'http://localhost:3000', 'http://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io'],
+  origin: ['https://kanspark-ruddy.vercel.app', 'http://localhost:3000', 'http://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io', 'https://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io'],
   credentials: true,
 }));
 app.use(express.json());
