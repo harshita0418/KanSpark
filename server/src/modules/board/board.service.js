@@ -12,6 +12,7 @@ const createBoard = async (title, description, userId) => {
 
 const getAllBoards = async (userId) => {
   const boards = await Board.find({
+    deletedAt: null,
     $or: [
       { createdBy: userId },
       { 'members.userId': userId }
@@ -27,6 +28,7 @@ const getAllBoards = async (userId) => {
 const getBoardById = async (boardId, userId) => {
   const board = await Board.findOne({
     _id: boardId,
+    deletedAt: null,
     $or: [
       { createdBy: userId },
       { 'members.userId': userId }
@@ -37,13 +39,46 @@ const getBoardById = async (boardId, userId) => {
 };
 
 const deleteBoard = async (boardId, userId) => {
-  const board = await Board.findOneAndDelete({ _id: boardId, createdBy: userId });
+  const board = await Board.findOneAndUpdate(
+    { _id: boardId, createdBy: userId },
+    { deletedAt: new Date() },
+    { returnDocument: 'after' }
+  );
   return board;
+};
+
+const getArchivedBoards = async (userId) => {
+  const boards = await Board.find({
+    deletedAt: { $ne: null },
+    $or: [
+      { createdBy: userId },
+      { 'members.userId': userId }
+    ]
+  })
+  .populate('members.userId', 'name lastname email')
+  .populate('createdBy', 'name lastname email')
+  .sort({ deletedAt: -1 });
+
+  return boards;
+};
+
+const restoreBoard = async (boardId, userId) => {
+  const board = await Board.findOneAndUpdate(
+    { _id: boardId, deletedAt: { $ne: null } },
+    { deletedAt: null },
+    { returnDocument: 'after' }
+  );
+  return board;
+};
+
+const permanentDeleteBoard = async (boardId, userId) => {
+  const board = await Board.findOneAndDelete({ _id: boardId });
+  return { message: 'Board permanently deleted' };
 };
 
 const updateBoard = async (boardId, userId, { title, description }) => {
   let board = await Board.findOneAndUpdate(
-    { _id: boardId, createdBy: userId },
+    { _id: boardId, deletedAt: null, createdBy: userId },
     { title, description },
     { returnDocument: 'after' }
   );
@@ -52,6 +87,7 @@ const updateBoard = async (boardId, userId, { title, description }) => {
 
   const boardWithMember = await Board.findOne({
     _id: boardId,
+    deletedAt: null,
     'members.userId': userId,
     'members.role': { $in: ['owner', 'editor'] }
   });
@@ -75,5 +111,7 @@ module.exports = {
   getBoardById,
   deleteBoard,
   updateBoard,
-
+  getArchivedBoards,
+  restoreBoard,
+  permanentDeleteBoard,
 };

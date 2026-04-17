@@ -31,6 +31,10 @@ const boardSchema = new mongoose.Schema(
       required: true,
     },
     members: [boardMemberSchema],
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );

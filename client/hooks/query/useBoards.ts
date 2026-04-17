@@ -12,3 +12,14 @@ export function useBoards() {
     queryFn: fetchBoards,
   });
 }
+
+async function fetchArchivedBoards(): Promise<Board[]> {
+  return apiFetch<Board[]>('/boards/archived');
+}
+
+export function useArchivedBoards() {
+  return useQuery({
+    queryKey: ['boards', 'archived'],
+    queryFn: fetchArchivedBoards,
+  });
+}

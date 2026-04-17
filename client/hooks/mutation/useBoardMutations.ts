@@ -22,6 +22,18 @@ async function deleteBoard(boardId: string): Promise<void> {
   });
 }
 
+async function restoreBoard(boardId: string): Promise<Board> {
+  return apiFetch<Board>(`/boards/${boardId}/restore`, {
+    method: 'POST',
+  });
+}
+
+async function permanentDeleteBoard(boardId: string): Promise<void> {
+  return apiFetch<void>(`/boards/${boardId}/permanent`, {
+    method: 'DELETE',
+  });
+}
+
 async function addMember(boardId: string, userId: string, role: string): Promise<unknown> {
   return apiFetch(`/members/${boardId}/members`, {
     method: 'POST',
@@ -72,6 +84,29 @@ export function useDeleteBoard() {
     mutationFn: deleteBoard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['boards'] });
+    },
+  });
+}
+
+export function useRestoreBoard() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: restoreBoard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['boards'] });
+      queryClient.invalidateQueries({ queryKey: ['boards', 'archived'] });
+    },
+  });
+}
+
+export function usePermanentDeleteBoard() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: permanentDeleteBoard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['boards', 'archived'] });
     },
   });
 }

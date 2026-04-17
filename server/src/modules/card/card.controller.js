@@ -2,10 +2,15 @@ const { createCard, updateCard, deleteCard, moveCard, getCardsByList } = require
 
 const getByList = async (req, res) => {
   try {
-    const { listId } = req.query;
+    const { listId, boardId } = req.query;
     
-    if (!listId) {
-      return res.status(400).json({ success: false, message: "listId is required" });
+    if (!listId && !boardId) {
+      return res.status(400).json({ success: false, message: "listId or boardId is required" });
+    }
+
+    if (boardId) {
+      const cards = await getCardsByList(boardId);
+      return res.status(200).json(cards);
     }
 
     const cards = await getCardsByList(listId);
@@ -24,9 +29,14 @@ const create = async (req, res) => {
       return res.status(400).json({ success: false, message: "title and listId are required" });
     }
 
-    const data = await createCard({ title, description, listId });
+    const card = await createCard({ title, description, listId });
 
-    return res.status(201).json(data);
+    const io = req.app.get('io');
+    if (io && card.boardId) {
+      io.to(card.boardId.toString()).emit('board-update', { type: 'card-created', card });
+    }
+
+    return res.status(201).json(card);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -37,9 +47,14 @@ const update = async (req, res) => {
     const { cardId } = req.params;
     const { title, description, assigneeId } = req.body;
 
-    const data = await updateCard({ cardId, title, description, assigneeId });
+    const card = await updateCard({ cardId, title, description, assigneeId });
 
-    return res.status(200).json(data);
+    const io = req.app.get('io');
+    if (io && card.boardId) {
+      io.to(card.boardId.toString()).emit('board-update', { type: 'card-updated', card });
+    }
+
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -49,9 +64,14 @@ const remove = async (req, res) => {
   try {
     const { cardId } = req.params;
 
-    const data = await deleteCard({ cardId });
+    const card = await deleteCard({ cardId });
 
-    return res.status(200).json(data);
+    const io = req.app.get('io');
+    if (io && card.boardId) {
+      io.to(card.boardId.toString()).emit('board-update', { type: 'card-deleted', cardId });
+    }
+
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }
@@ -69,9 +89,14 @@ const move = async (req, res) => {
       });
     }
 
-    const data = await moveCard({ cardId, newListId, position });
+    const card = await moveCard({ cardId, newListId, position });
 
-    return res.status(200).json(data);
+    const io = req.app.get('io');
+    if (io && card.boardId) {
+      io.to(card.boardId.toString()).emit('board-update', { type: 'card-moved', card });
+    }
+
+    return res.status(200).json(card);
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message });
   }

@@ -54,10 +54,39 @@ const updateBoard = asyncHandler(async (req, res) => {
   res.status(200).json(board);
 });
 
+const getArchivedBoards = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const boards = await boardService.getArchivedBoards(userId);
+  res.status(200).json(boards);
+});
+
+const restoreBoard = asyncHandler(async (req, res) => {
+  const { boardId } = req.params;
+  const userId = req.user.id;
+  const board = await boardService.restoreBoard(boardId, userId);
+  
+  if (!board) {
+    return res.status(404).json({ success: false, message: "Board not found" });
+  }
+  
+  res.status(200).json(board);
+});
+
+const permanentDeleteBoard = asyncHandler(async (req, res) => {
+  const { boardId } = req.params;
+  const userId = req.user.id;
+  await boardService.permanentDeleteBoard(boardId, userId);
+  
+  res.status(200).json({ message: "Board permanently deleted" });
+});
+
 module.exports = {
   createBoard,
   getAllBoards,
   getBoard,
   deleteBoard,
   updateBoard,
+  getArchivedBoards,
+  restoreBoard,
+  permanentDeleteBoard,
 };

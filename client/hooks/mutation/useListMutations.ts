@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiFetch } from '@/lib/api';
 import type { List } from '@/types/board';
 
-async function createList(boardId: string, title: string): Promise<List> {
+async function createList(boardId: string, title: string, color?: string): Promise<List> {
   return apiFetch<List>('/lists', {
     method: 'POST',
-    body: JSON.stringify({ title, boardId }),
+    body: JSON.stringify({ title, boardId, color }),
   });
 }
 
@@ -23,9 +23,9 @@ async function deleteList(listId: string): Promise<void> {
 }
 
 async function reorderLists(boardId: string, listIds: string[]): Promise<void> {
-  return apiFetch<void>('/lists/reorder', {
+  return apiFetch<void>(`/lists/reorder?boardId=${boardId}`, {
     method: 'POST',
-    body: JSON.stringify({ boardId, listIds }),
+    body: JSON.stringify({ listIds }),
   });
 }
 
@@ -33,7 +33,7 @@ export function useCreateList() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ boardId, title }: { boardId: string; title: string }) => createList(boardId, title),
+    mutationFn: ({ boardId, title, color }: { boardId: string; title: string; color?: string }) => createList(boardId, title, color),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['lists', variables.boardId] });
     },
@@ -44,7 +44,7 @@ export function useUpdateList() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ listId, data }: { listId: string; data: { title?: number; position?: number } }) =>
+    mutationFn: ({ listId, data }: { listId: string; data: { title?: string; position?: number } }) =>
       updateList(listId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['lists'] });

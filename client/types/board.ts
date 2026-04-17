@@ -24,6 +24,7 @@ export interface Board {
   createdAt: string;
   updatedAt: string;
   members?: BoardMember[];
+  deletedAt?: string | null;
 }
 
 export interface CreateBoardInput {
@@ -35,6 +36,7 @@ export interface List {
   _id: string;
   title: string;
   boardId: string;
+  color?: string;
   position: number;
   createdAt: string;
   updatedAt: string;

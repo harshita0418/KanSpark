@@ -29,6 +29,24 @@ async function moveCard(cardId: string, newListId: string, position: number): Pr
   });
 }
 
+export function useMoveCard() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ cardId, newListId, position }: { cardId: string; newListId: string; position: number }) => {
+      console.log('useMoveCard called:', { cardId, newListId, position });
+      return moveCard(cardId, newListId, position);
+    },
+    onSuccess: (_data, variables) => {
+      console.log('useMoveCard success:', variables);
+      queryClient.invalidateQueries({ queryKey: ['board-cards', variables.newListId] });
+    },
+    onError: (error) => {
+      console.error('useMoveCard error:', error);
+    },
+  });
+}
+
 export function useCreateCard() {
   const queryClient = useQueryClient();
   
@@ -58,18 +76,6 @@ export function useDeleteCard() {
   
   return useMutation({
     mutationFn: (cardId: string) => deleteCard(cardId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cards'] });
-    },
-  });
-}
-
-export function useMoveCard() {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: ({ cardId, newListId, position }: { cardId: string; newListId: string; position: number }) =>
-      moveCard(cardId, newListId, position),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cards'] });
     },

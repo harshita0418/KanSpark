@@ -11,6 +11,10 @@ const listSchema = new mongoose.Schema({
     ref: 'Board',
     required: true,
   },
+  color: {
+    type: String,
+    default: '#868e96',
+  },
   position: {
     type: Number,
     default: 0,

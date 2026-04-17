@@ -12,6 +12,8 @@ app.use(cors({
 app.use(express.json());
 app.use(logger);
 
+// Make io available to routes
+app.set('io', null);
 
 // Routes
 const userRoutes = require('./modules/user/user.routes');

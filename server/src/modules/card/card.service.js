@@ -2,8 +2,23 @@ const mongoose = require("mongoose");
 const Card = require("./card.model");
 const List = require("../list/list.model");
 
-const getCardsByList = async (listId) => {
-  const cards = await Card.find({ listId }).sort({ position: 1 });
+const getCardsByList = async (id) => {
+  let query = {};
+  
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    if (id.length === 24) {
+      const list = await List.findById(id);
+      if (list) {
+        query = { listId: id };
+      } else {
+        query = { boardId: id };
+      }
+    } else {
+      query = { boardId: id };
+    }
+  }
+  
+  const cards = await Card.find(query).sort({ position: 1 });
   return cards;
 };
 
@@ -54,9 +69,10 @@ const deleteCard = async ({ cardId }) => {
     throw new Error("Card not found");
   }
 
+  const boardId = card.boardId;
   await Card.deleteOne({ _id: cardId });
 
-  return { message: "Card deleted successfully" };
+  return { message: "Card deleted successfully", boardId };
 };
 
 const moveCard = async ({ cardId, newListId, position }) => {

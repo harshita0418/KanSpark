@@ -1,6 +1,6 @@
 const List = require('./list.model');
 
-const createList = async ({ title, boardId }) => {
+const createList = async ({ title, boardId, color }) => {
   if (!title || !boardId) {
     throw new Error('title and boardId are required');
   }
@@ -11,6 +11,7 @@ const createList = async ({ title, boardId }) => {
   const list = await List.create({
     title,
     boardId,
+    color: color || '#868e96',
     position,
   });
 
@@ -41,8 +42,9 @@ const deleteList = async (listId) => {
     throw new Error('List not found');
   }
 
+  const boardId = list.boardId.toString();
   await List.deleteOne({ _id: listId });
-  return { message: 'List deleted successfully' };
+  return { message: 'List deleted successfully', boardId };
 };
 
 const reorderLists = async (boardId, listIds) => {

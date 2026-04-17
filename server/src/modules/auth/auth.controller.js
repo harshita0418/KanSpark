@@ -1,4 +1,4 @@
-const { registerUser, loginUser } = require("./auth.service");
+const { registerUser, loginUser, forgotPassword, resetPassword } = require("./auth.service");
 
 const asyncHandler = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch((err) => next(err));
@@ -42,4 +42,41 @@ const login = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports = { register, login };
+const forgot = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Email is required" 
+    });
+  }
+
+  await forgotPassword(email);
+
+  return res.status(200).json({
+    success: true,
+    message: "Password reset email sent if email exists",
+  });
+});
+
+const reset = asyncHandler(async (req, res, next) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Token and password are required" 
+    });
+  }
+
+  const data = await resetPassword(token, password);
+
+  return res.status(200).json({
+    success: true,
+    message: "Password reset successful",
+    data,
+  });
+});
+
+module.exports = { register, login, forgot, reset };
