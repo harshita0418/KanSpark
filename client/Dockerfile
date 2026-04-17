@@ -4,10 +4,10 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
 
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+RUN yarn install
 
 FROM base AS builder
 WORKDIR /app
@@ -17,7 +17,7 @@ COPY . .
 ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
-RUN pnpm build
+RUN npx next build
 
 FROM base AS runner
 WORKDIR /app

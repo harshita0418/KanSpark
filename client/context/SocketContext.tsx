@@ -29,7 +29,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
 
   useEffect(() => {
     if (isAuthenticated && token) {
-      const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001', {
+      const newSocket = io(process.env.NEXT_PUBLIC_API_URL || 'http://c104tf3zqc3vhhm6j5uajocc.82.25.108.191.sslip.io', {
         auth: { token },
         transports: ['websocket', 'polling'],
       });
