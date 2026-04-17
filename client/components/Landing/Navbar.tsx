@@ -35,15 +35,13 @@ export function Navbar() {
             <Anchor component={Link} href="/workspace" c="dimmed" className={classes.navLink}>
               Workspace
             </Anchor>
-            <Anchor component={Link} href="/pricing" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/#pricing" c="dimmed" className={classes.navLink}>
               Pricing
             </Anchor>
-            <Anchor component={Link} href="/about" c="dimmed" className={classes.navLink}>
+            <Anchor component={Link} href="/#about" c="dimmed" className={classes.navLink}>
               About
             </Anchor>
-            <Anchor component={Link} href="/blog" c="dimmed" className={classes.navLink}>
-              Blog
-            </Anchor>
+         
           </Group>
 
           <Group gap="sm">
